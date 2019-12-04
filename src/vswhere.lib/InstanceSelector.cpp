@@ -162,6 +162,25 @@ vector<ISetupInstancePtr> InstanceSelector::Select(_In_opt_ IEnumSetupInstances*
         }
     }
 
+	// Get an instance from the current environment (if possible)
+	wchar_t* visualStudioVersion = nullptr;
+	size_t visualStudioVersionSize = 0;
+
+	_wdupenv_s(&visualStudioVersion, &visualStudioVersionSize, L"VisualStudioVersion");
+
+	wchar_t* visualStudioInstallDir = nullptr;
+	size_t visualStudioInstallDirSize = 0;
+
+	_wdupenv_s(&visualStudioInstallDir, &visualStudioInstallDirSize, L"VSINSTALLDIR");
+
+	if(*visualStudioVersion && *visualStudioInstallDir)
+		instances.push_back(new LegacyInstance(visualStudioVersion, visualStudioInstallDir));
+
+	if (visualStudioVersion)
+		free(visualStudioVersion);
+	if (visualStudioInstallDir)
+		free(visualStudioInstallDir);
+
     return instances;
 }
 
